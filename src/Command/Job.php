@@ -823,11 +823,15 @@ class Job extends Command
         EmailQueue::chunkById(500, function ($email_queues) {
             foreach ($email_queues as $email_queue) {
                 try {
-                    Mail::send($email_queue->to_email, $email_queue->subject, $email_queue->template, json_decode($email_queue->array), []);
+                    if (filter_var($email_queue->to_email, FILTER_VALIDATE_EMAIL)) {
+                        Mail::send($email_queue->to_email, $email_queue->subject, $email_queue->template, json_decode($email_queue->array), []);
+                        echo "[{$email_queue->to_email}] - 发送成功" . PHP_EOL;
+                    } else {
+                        echo "[{$email_queue->to_email}] - 不是有效的邮箱格式" . PHP_EOL;
+                    }
                 } catch (Exception $e) {
                     echo $e->getMessage();
                 }
-                echo '发送邮件至 ' . $email_queue->to_email . PHP_EOL;
                 $email_queue->delete();
             }
         });
@@ -865,6 +869,8 @@ class Job extends Command
                 $_ENV['email_queue']
             );
             $user->class = 0;
+            $user->node_connector = Config::getconfig('Register.string.defaultConn');
+            $user->node_speedlimit = Config::getconfig('Register.string.defaultSpeedlimit');
             $user->save();
         }
     }
