@@ -56,7 +56,7 @@ class AppURI
         $return = null;
         switch ($item['type']) {
             case 'vmess':
-                if (isset($item['vtype']) && (string)$item['vtype'] == "vmess://") {
+                if ((string)$item['vtype'] == "vmess://") {
                     $node = [
                         'v' => "2",
                         'ps' => $item['remark'],
@@ -393,8 +393,6 @@ class AppURI
                     $return['network'] = 'ws';
                     $return['ws-path'] = $item['path'];
                     $return['ws-headers']['Host'] = ($item['host'] != '' ? $item['host'] : $item['add']);
-                    $return['ws-opts']['path'] = $item['path'];
-                    $return['ws-opts']['headers']['Host'] = ($item['host'] != '' ? $item['host'] : $item['add']);
                 }
                 if ($item['tls'] == 'tls') {
                     $return['tls'] = true;
@@ -454,7 +452,7 @@ class AppURI
                 $return = (self::getItemUrl($item, 0));
                 break;
             case 'vmess':
-                if (!in_array($item['net'], ['tcp', 'ws', 'http', 'h2', 'grpc'])) {
+                if (!in_array($item['net'], ['tcp', 'ws', 'http', 'h2'])) {
                     break;
                 }
                 $obfs = '';
@@ -469,11 +467,6 @@ class AppURI
                         break;
                     case 'mkcp':
                         $obfs .= 'obfsParam={"header":' . '"' . ($item['headerType'] == '' || $item['headerType'] == 'noop' ? 'none' : $item['headerType']) . '"' . '}&obfs=mkcp';
-                        break;
-                    case 'grpc':
-                        $obfs .= ($item['host'] != ''
-                            ? ('&obfsParam=' . '&path=' . $item['servicename'] . '&obfs=grpc')
-                            : ('&obfsParam=' . $item['add'] . '&path=' . $item['servicename'] . '&obfs=grpc'));
                         break;
                     case 'h2':
                         $obfs .= ($item['host'] != ''
@@ -494,7 +487,7 @@ class AppURI
                         ? ('&peer=' . $item['sni'])
                         : ('&peer=' . $item['host']));
                 }
-                $return = ('vmess://' . Tools::base64_url_encode('chacha20-poly1305:' . $item['id'] . '@' . $item['add'] . ':' . $item['port']) . '?remarks=' . rawurlencode($item['remark']) . $obfs . $tls . '&alterId=' . $item['aid']);
+                $return = ('vmess://' . Tools::base64_url_encode('auto:' . $item['id'] . '@' . $item['add'] . ':' . $item['port']) . '?remarks=' . rawurlencode($item['remark']) . $obfs . $tls . '&alterId=' . $item['aid']);
                 break;
             case 'trojan':
                 $return = ('trojan://' . $item['passwd'] . '@' . $item['address'] . ':' . $item['port']);
