@@ -203,6 +203,7 @@ return function (SlimApp $app) {
 
         $this->get('/node/create',              App\Controllers\Admin\NodeController::class . ':create');
         $this->post('/node',                    App\Controllers\Admin\NodeController::class . ':add');
+        $this->post('/node/copy',               App\Controllers\Admin\NodeController::class . ':copy');
         $this->get('/node/{id}/edit',           App\Controllers\Admin\NodeController::class . ':edit');
         $this->put('/node/{id}',                App\Controllers\Admin\NodeController::class . ':update');
         $this->delete('/node',                  App\Controllers\Admin\NodeController::class . ':delete');
@@ -353,7 +354,13 @@ return function (SlimApp $app) {
         });
         // admin 增加收入和新用户统计
         $this->get('/api/analytics/income',     App\Controllers\AdminController::class . ':getIncome');
-        $this->get('/api/analytics/new-users',  App\Controllers\AdminController::class . ':newUsers');
+        $this->get('/api/analytics/node',     App\Controllers\AdminController::class . ':getNodeTraffic');
+        $this->get('/api/analytics/userTraffic',     App\Controllers\AdminController::class . ':getUserTraffic');
+        $this->get('/api/analytics/new_users',  App\Controllers\AdminController::class . ':newUsers');
+        $this->get('/api/analytics/ref_user_count',  App\Controllers\AdminController::class . ':getRefUserCount');
+        $this->get('/api/analytics/ref_money_count',  App\Controllers\AdminController::class . ':getRefMoneyCount');
+        $this->get('/api/analytics/get_order_detail',  App\Controllers\AdminController::class . ':getOrderDetail');
+        $this->get('/api/analytics/get_ticket_detail',  App\Controllers\AdminController::class . ':getTicketDetail');
 
         # Metron
         // Help Mange

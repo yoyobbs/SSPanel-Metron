@@ -12,7 +12,8 @@ class MetronPay extends AbstractPayment
     {
         if ($telegram === 0) {
             $price = $request->getParam('price') ?? 0;
-            $type = $request->getParam('type');
+            $pay_type = $request->getParam('type');
+            $type = isset(explode('_', $pay_type)[1]) ? explode('_', $pay_type)[1] : $request->getParam('type');
             $client = $request->getParam('client');
             $paylist_id = (int)$request->getParam('paylist_id');
 
@@ -54,7 +55,7 @@ class MetronPay extends AbstractPayment
 
         if ($type == 'alipay') {
             # 支付宝
-            $payment_system = MetronSetting::get('pay_alipay');
+            $payment_system = MetronSetting::get($pay_type);
             if (MetronSetting::get('max_alipay_pay') != 'none' && MetronSetting::get('max_alipay_pay') != '' && MetronSetting::get('max_alipay_num') != 0 && $price >= MetronSetting::get('max_alipay_num')) {
                 $payment_system = MetronSetting::get('max_alipay_pay');
             }
@@ -115,16 +116,15 @@ class MetronPay extends AbstractPayment
                         );
                     }
                     return json_encode($return);
-                case ('pycloudspay'):
-                    $pycloudspay = new Epay();
-                    $result = $pycloudspay->MetronPay($type, $price, $shopinfo, $paylist_id);
+                case ('epay'):
+                    $epay = new Epay();
+                    $result = $epay->MetronPay($type, $price, $shopinfo, $paylist_id);
                     if ($result['errcode'] === 0) {
                         $return = array(
                             'ret' => 1,
                             'type' => 'url',
                             'tradeno' => $result['tradeno'],
-                            'url' => $result['code'],
-                            'errmsg' => $result['msg']
+                            'url' => $result['code']
                         );
                     } else {
                         $return = array(
@@ -234,7 +234,7 @@ class MetronPay extends AbstractPayment
 
         } else if ($type == 'wxpay') {
             # 微信支付
-            $payment_system = MetronSetting::get('pay_wxpay');
+            $payment_system = MetronSetting::get($pay_type);
             if (MetronSetting::get('max_wxpay_pay') != 'none' && MetronSetting::get('max_wxpay_pay') != '' && MetronSetting::get('max_wxpay_num') != 0 && $price >= MetronSetting::get('max_wxpay_num')) {
                 $payment_system = MetronSetting::get('max_wxpay_pay');
             }
@@ -366,6 +366,23 @@ class MetronPay extends AbstractPayment
                         );
                     }
                     return json_encode($return);
+                case ('epay'):
+                    $epay = new Epay();
+                    $result = $epay->MetronPay($type, $price, $shopinfo, $paylist_id);
+                    if ($result['errcode'] === 0) {
+                        $return = array(
+                            'ret' => 1,
+                            'type' => 'url',
+                            'tradeno' => $result['tradeno'],
+                            'url' => $result['code']
+                        );
+                    } else {
+                        $return = array(
+                            'ret' => 0,
+                            'msg' => $result['errmsg']
+                        );
+                    }
+                    return json_encode($return);
                 default:
                     $return = array(
                         'ret' => 0,
@@ -426,6 +443,34 @@ class MetronPay extends AbstractPayment
                     );
                     return json_encode($return);
             }
+        }  else if ($type == 'crypto') {
+            # 数字货币支付
+            $payment_system = MetronSetting::get('pay_crypto');
+            switch ($payment_system) {
+                case ('bobpay'):
+                    $tron = new BobTronPay();
+                    $result = $tron->MetronPay($type, $price, $shopinfo, $paylist_id);
+                    if ($result['errcode'] == 0) {
+                        $return = array(
+                            'ret' => 1,
+                            'type' => 'url',
+                            'tradeno' => $result['pid'],
+                            'url' => $result['url']
+                        );
+                    } else {
+                        $return = array(
+                            'ret' => 0,
+                            'msg' => $result['errmsg']
+                        );
+                    }
+                    return json_encode($return);
+                default:
+                    $return = array(
+                        'ret' => 0,
+                        'msg' => $payment_system . ' 支付系统错误,请联系客服'
+                    );
+                    return json_encode($return);
+            }
         } else {
             return json_encode(['ret' => 0, 'msg' => '错误的支付方式']);
         }
@@ -464,9 +509,9 @@ class MetronPay extends AbstractPayment
                 $done = $this->postPayment($request->getParam('out_trade_no'), 'PayTaro');
                 die('SUCCESS');
                 return;
-            case ('pycloudspay'):
-                $pycloudspay = new Epay();
-                $pycloudspay->notify($request, $response, $args);
+            case ('epay'):
+                $epay = new Epay();
+                $epay->notify($request, $response, $args);
                 return;
             case ('f2fpay'):
                 $gateway = Omnipay::create('Alipay_AopF2F');
@@ -555,6 +600,10 @@ class MetronPay extends AbstractPayment
             case ('theadpay'):
                 $notify = new THeadPay();
                 $notify->notify($request, $response, $args);
+                return;
+            case ('bobpay'):
+                $tron = new BobTronPay();
+                $tron->notify($request, $response, $args);
                 return;
             default:
                 return 'failed';

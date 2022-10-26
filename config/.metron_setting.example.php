@@ -16,6 +16,15 @@ $_MT['style_shadow'] = 'rounded-lg shadow';    // 卡片圆角: rounded / rounde
 #####  落地页设置  --------------------------------------------------------------------------------------------
 $_MT['index_enable'] = false;                // true: 开启落地页 false:关闭落地页,并自动跳转至用户中心  落地页还在咕,先不要开
 
+#####  背景图设置  --------------------------------------------------------------------------------------------
+// 登录/注册页面 背景图
+$_MT['index_background_image'] = "https://cdn.jsdelivr.net/gh/BobCoderS9/metron-assets@3.0.2/metron/media/bg/bg-2.jpg";
+// 登录/注册页面 LOGO
+$_MT['index_background_logo'] = "https://cdn.jsdelivr.net/gh/BobCoderS9/metron-assets@3.0.2/metron/media/logos/user.png";
+// 用户中心顶部背景图
+$_MT['user_background_top'] = "https://cdn.jsdelivr.net/gh/BobCoderS9/metron-assets@3.0.2/metron/media/bg/bg-01-450.jpg";
+
+
 #####  重要通知弹窗  --------------------------------------------------------------------------------------------
 $_MT['domain_info']  = true;                     // 当用户访问网站的地址不是config设置的, 提示用户转到 config 地址
 $_MT['domain_time']  = 15;                     // 弹出后间隔多久再提示 (单位:分钟)
@@ -112,18 +121,18 @@ $_MT['help_Keywords'] = ['下载', '套餐', 'SSR',];     // 文档中心推荐�
 $_MT['nodes_filter'] = false;        // 开启订阅节点筛选
 $_MT['nodes_miniName'] = false;     // 允许用户开启节点正则匹配简化节点名称, 启用该选项需熟悉使用正则表达式
 $_MT['nodes_regex'] = '/\[(.*?)\]/';     // 节点筛选设置中节点名称缩短的正则表达式, 默认 [ ] 中的字符都会被移除
-# 主页订阅框显示哪些订阅     可选: ssr, v2ray, surge, clash, clashr, surfboard, kitsunebi, shadowrocket, quantumult, quantumultx,
+# 主页订阅框显示哪些订阅     可选: ssr, v2ray, surge, clash, surfboard, kitsunebi, shadowrocket, quantumult, quantumultx,
 $_MT['index_sub'] = [
     'ssr',
     'v2ray',
     'surge',
     'clash',
-    'clashr',
     'surfboard',
     'kitsunebi',
     'quantumult',
     'quantumultx',
     'shadowrocket',
+    'stash'
 ];
 # 共享账号
 $_MT['shared_account_enable'] = true;       // 显示 共享账号 导航菜单
@@ -176,15 +185,19 @@ $_MT['shared_account'] = [
 # 使用哪种支付方式需要在 Config 中设置好参数
 # 目前支持的支付方式: 不使用请设置为 none
 # 支付方式后面带 _qr 为使用站内二维码方式, 无需离开网站即可支付, _url 为跳转到支付链接进行支付, 不带的默认使用原支付的方式
-# 支付宝: codepay |stripe | paytaro | wolfpay_ur | wolfpay_qr | yftpay | pycloudspay | f2fpay | pcexpay
+# 支付宝: codepay |stripe | paytaro | wolfpay_ur | wolfpay_qr | yftpay | epay | f2fpay | pcexpay
 # 微信  : codepay | stripe | paytaro | wolfpay_ur | payjs
 # QQ钱包: codepay |
 
 $_MT['pay_alipay']     = 'none';        // 支付宝默认
+$_MT['pay_alipay_2']     = 'none';        // 支付宝2
+$_MT['pay_alipay_3']     = 'none';        // 支付宝3
 $_MT['max_alipay_num'] = 0;     // 使用支付宝支付时, 金额大于等于设定值, 使用下方支付方式 (设置 0 不使用)
 $_MT['max_alipay_pay'] = 'none';      // 支付金额大于上面设置的值时, 使用此支付方式
 
 $_MT['pay_wxpay']      = 'none';      // 微信默认
+$_MT['pay_wxpay_2']      = 'none';      // 微信2
+$_MT['pay_wxpay_3']      = 'none';      // 微信3
 $_MT['max_wxpay_num']  = 0;     // 使用微信支付时, 金额大于等于设定值, 使用下方支付方式 (设置 0 不使用)
 $_MT['max_wxpay_pay']  = 'none';  // 支付金额大于上面设置的值时, 使用此支付方式
 
@@ -192,7 +205,7 @@ $_MT['pay_qqpay']      = 'none';      // QQ钱包默认
 $_MT['max_qqpay_num']  = 0;     // 使用微信支付时, 金额大于等于设定值, 使用下方支付方式
 $_MT['max_qqpay_pay']  = 'none';  // 支付金额大于上面设置的值时, 使用此支付方式
 
-$_MT['pay_crypto']     = 'bob_tron_pay';	// 数字货币支付
+$_MT['pay_crypto']     = 'bobpay';	// 数字货币支付
 
 $_MT['mix_amount'] = 0;     // 限制每次最低充值, 商店购买套餐不受此限制。（因为商店扣除余额后可能出现很低的金额）
 
